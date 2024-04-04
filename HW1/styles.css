@@ -1,0 +1,19 @@
+
+
+div {
+    direction: rtl;
+    font-family: 'Vazirmatn', sans-serif;
+    text-align: right;
+}
+h1, h2 {
+    text-align: center;
+}
+h1 {
+    color: green;
+}
+h2 {
+    color: lightgreen;
+}
+b {
+    color: lightblue;
+}
