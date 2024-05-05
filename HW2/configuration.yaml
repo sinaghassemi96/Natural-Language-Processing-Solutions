@@ -1,0 +1,16 @@
+connectors:
+  matrix:
+    mxid: '@sinaghassemi96:matrix.org'
+    password: 'SinaPass@43'
+    rooms:
+      'main': '#testYourFriend:matrix.org'
+    homeserver: 'https://matrix.org'
+    nick: 'Your Friend'
+    device_id: 'OPSDroid'
+    enable_encryption: True
+
+skills:
+  greetings:
+    path: skills/greetings.py
+  accept_invite:
+    path: skills/accept_invite.py
