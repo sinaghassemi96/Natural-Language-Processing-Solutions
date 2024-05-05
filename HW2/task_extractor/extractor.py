@@ -1,8 +1,16 @@
 import json
 import hazm
-from task_extractor.patterns import Patterns
+from hazm import tree2brackets
+
+from .patterns import Patterns
 import re
-from task_extractor.parser import MixedRegexpParser
+from .parser import MixedRegexpParser
+
+
+def reform_chunker_array(text: str) -> list:
+    pattern = r'\[([^\]]+)\]'
+    tagged_words = re.findall(pattern, text)
+    return [(' '.join(p for p in pair.split()[:-1]), pair.split()[-1]) for pair in tagged_words]
 
 class Task:
     def __init__(self):
@@ -21,6 +29,7 @@ class TaskExtractor:
     sent_tokenizer = hazm.SentenceTokenizer()
     word_tokenizer = hazm.WordTokenizer()
     POS_tagger = hazm.POSTagger(model='models/pos_tagger.model')
+    chunker = hazm.Chunker(model='models/chunker.model')
     lemmatizer = hazm.Lemmatizer()
     patterns = Patterns()
 
@@ -32,7 +41,13 @@ class TaskExtractor:
             if task.name.startswith(name) or name.startswith(task.name):
                 return True
         return False
-    
+
+    def parse_task(self, groups):
+        if 'TASK' in groups:
+            if self.check_for_tasks(' '.join(word for word, tag in groups['TASK'])):
+                return None
+            return ' '.join(word for word, tag in groups['TASK'])
+
     def parse_name(self, groups):
         if 'NAME' in groups:
             if self.check_for_tasks(' '.join(word for word, tag in groups['NAME'])):
@@ -81,13 +96,13 @@ class TaskExtractor:
         text = self.normalizer.normalize(text)
         for sent in self.sent_tokenizer.tokenize(text):
             words = self.word_tokenizer.tokenize(sent)
-            tags = self.POS_tagger.tag(words)
+            tags = reform_chunker_array(tree2brackets(self.chunker.parse(self.POS_tagger.tag(words))))
             tags = [tag for tag in tags if tag[1] != 'PUNCT']
             for pattern in self.patterns['DECLARATIONS']:
                 result = pattern.parse(tags)
                 if result:
                     matches, groups = result
-                    name = self.parse_name(groups)
+                    name = self.parse_task(groups)
                     if not name:
                         continue
                     task = Task()
