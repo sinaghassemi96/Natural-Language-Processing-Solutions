@@ -15,11 +15,12 @@ def reform_chunker_array(text: str) -> list:
 class Task:
     def __init__(self):
         self.name = ''
-        self.subtasks = []
-        self.assignees = []
-        self.start_date = ''
-        self.end_date = ''
-        self.is_done = False
+        # self.subtasks = []
+        # self.assignees = []
+        self.period = ''
+        self.time = ''
+        self.done = False
+        self.cancel = False
 
     def __repr__(self):
         return json.dumps(self.__dict__, indent=4, ensure_ascii=False)
@@ -47,6 +48,15 @@ class TaskExtractor:
             if self.check_for_tasks(' '.join(word for word, tag in groups['TASK'])):
                 return None
             return ' '.join(word for word, tag in groups['TASK'])
+
+    def parse_period(self, groups, task: Task):
+        if 'PERIOD' in groups:
+            task.period = ' '.join(word for word, tag in groups['PERIOD'])
+
+
+    def parse_time(self, groups, task: Task):
+        if 'TIME' in groups:
+            task.time = ' '.join(word for word, tag in groups['TIME'])
 
     def parse_name(self, groups):
         if 'NAME' in groups:
@@ -96,7 +106,8 @@ class TaskExtractor:
         text = self.normalizer.normalize(text)
         for sent in self.sent_tokenizer.tokenize(text):
             words = self.word_tokenizer.tokenize(sent)
-            tags = reform_chunker_array(tree2brackets(self.chunker.parse(self.POS_tagger.tag(words))))
+            # tags = reform_chunker_array(tree2brackets(self.chunker.parse(self.POS_tagger.tag(words))))
+            tags = self.POS_tagger.tag(words)
             tags = [tag for tag in tags if tag[1] != 'PUNCT']
             for pattern in self.patterns['DECLARATIONS']:
                 result = pattern.parse(tags)
@@ -107,10 +118,8 @@ class TaskExtractor:
                         continue
                     task = Task()
                     task.name = name
-                    self.parse_start_date(task, groups)
-                    self.parse_end_date(task, groups)
-                    self.parse_assignees(task, groups)
-                    self.parse_subtasks(task, groups)
+                    self.parse_period(groups, task)
+                    self.parse_time(groups, task)
                     self.tasks.append(task)
             if not self.tasks:
                 continue
