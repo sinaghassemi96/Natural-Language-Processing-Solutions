@@ -16,10 +16,11 @@ class MixedRegexpParser:
             for match in matches[0]:
                 parsed_matches.append([])
                 for item in match[1:-1].split('><'):
-                    word, tag = item.split("','")
-                    word = word[1:]
-                    tag = tag[:-1]
-                    parsed_matches[-1].append((word, tag))
+                    if item != '':
+                        word, tag = item.split("','")
+                        word = word[1:]
+                        tag = tag[:-1]
+                        parsed_matches[-1].append((word, tag))
             named_groups = {}
             for group in self.pattern.groupindex:
                 named_groups[group] = parsed_matches[self.pattern.groupindex[group] - 1]

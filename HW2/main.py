@@ -6,7 +6,7 @@ from task_extractor.extractor import TaskExtractor
 normalizer = Normalizer()
 
 # sent = 'یادم‌ باشه هر روز ساعت 12 ظهر به یادگیری برنامه‌نویسی بپردازم.'
-sent = 'جلسه اسکرام روزانه‌ام را لغو کن.'
+sent = 'جلسه اسکرام روزانه‌ را لغو کن.'
 # sent = 'یادم‌ باشه'
 sent = normalizer.normalize(sent)
 extractor = TaskExtractor()
