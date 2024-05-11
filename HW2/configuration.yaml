@@ -1,13 +1,14 @@
 connectors:
   matrix:
-    mxid: '@sinaghassemi96:matrix.org'
-    password: 'SinaPass@43'
+    mxid: '@planner_bot:matrix.org'
+    password: 'PlannerPass@43'
     rooms:
-      'main': '#testYourFriend:matrix.org'
+      'main': '#first_room:matrix.org'
     homeserver: 'https://matrix.org'
     nick: 'Your Friend'
     device_id: 'OPSDroid'
     enable_encryption: True
+#  welcome-message: True
 
 skills:
   greetings:
