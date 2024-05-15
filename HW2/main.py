@@ -1,13 +1,14 @@
-from hazm import POSTagger, word_tokenize, Chunker, tree2brackets, Normalizer
+from hazm import Normalizer
 
 from task_extractor.extractor import TaskExtractor
-
 
 normalizer = Normalizer()
 
 # sent = 'یادم‌ باشه هر روز ساعت 12 ظهر به یادگیری برنامه‌نویسی بپردازم.'
-sent = 'جلسه اسکرام روزانه‌ام را لغو کن.'
-# sent = 'یادم‌ باشه'
+# sent = 'جلسه اسکرام روزانه‌ام را لغو کن.'
+# sent = 'کار تماس با دوستم انجام شد.'
+# sent = 'زمان تماس با دوستم در 12 فروردین را به 9:30 شب تغییر بده.'
+sent = 'برنامه هفتگی‌ام را نشان بده.'
 sent = normalizer.normalize(sent)
 extractor = TaskExtractor()
 res = extractor.run(sent)
