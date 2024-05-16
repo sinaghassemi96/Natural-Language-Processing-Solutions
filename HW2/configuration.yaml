@@ -1,0 +1,24 @@
+connectors:
+  matrix:
+    mxid: '@planner_bot:matrix.org'
+    password: 'PlannerPass@43'
+    rooms:
+      'main': '#first_room:matrix.org'
+    homeserver: 'https://matrix.org'
+    nick: 'Your Friend'
+    device_id: 'OPSDroid'
+    enable_encryption: True
+#  welcome-message: True
+
+skills:
+  welcome:
+    enabled: true
+    message: 'به دستیار مدیریت رویدادها و وقایع خوش آمدید.'
+  greetings:
+    path: skills/greetings.py
+  help:
+    path: skills/help.py
+  main:
+    path: skills/bot.py
+  accept_invite:
+    path: skills/accept_invite.py
