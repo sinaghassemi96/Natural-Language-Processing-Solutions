@@ -6,18 +6,17 @@ class TestTaskExtractor(unittest.TestCase):
         self.extractor = TaskExtractor()
 
     def test_default(self):
-        sent = 'باید تسک حل تمرین دوم درس را در یک آذر شروع کنیم و تا ده آذر تمام کنیم.'
+        sent = 'یادم باشه هر روز ساعت 8 صبح به جلسه اسکرام برم.'
         self.extractor.run(sent)
-        self.assertEqual(len(self.extractor.tasks), 1)
-        self.assertEqual(self.extractor.tasks[0].name, 'حل تمرین دوم درس')
-        self.assertEqual(self.extractor.tasks[0].start_date, 'یک آذر')
-        self.assertEqual(self.extractor.tasks[0].end_date, 'ده آذر')
-        self.assertFalse(self.extractor.tasks[0].is_done)
-        self.assertEqual(self.extractor.tasks[0].assignees, [])
-        self.assertEqual(self.extractor.tasks[0].subtasks, [])
-        sent = 'برای اینکار باید اول موضوع را مشخص کنیم و بعد پیاده‌سازی را انجام دهیم.'
+        self.assertEqual(len(self.extractor.get_tasks()), 1)
+        self.assertEqual(self.extractor.get_tasks()[0].name, 'رفتن به جلسه اسکرام')
+        self.assertEqual(self.extractor.get_tasks()[0].period, 'هر روز')
+        self.assertEqual(self.extractor.get_tasks()[0].time, 'ساعت 8 صبح')
+        self.assertFalse(self.extractor.get_tasks()[0].is_done, False)
+        self.assertEqual(self.extractor.get_tasks()[0].is_cancelled, False)
+        sent = 'کار رفتن به جلسه اسکرام هر روز را به ساعت 9 صبح تغییر بده'
         self.extractor.run(sent)
-        self.assertEqual(self.extractor.tasks[0].subtasks, ['موضوع را مشخص کنیم', 'پیاده‌سازی را انجام دهیم'])
+        self.assertEqual(self.extractor.get_tasks()[0].time, 'ساعت 9 صبح')
         sent = 'افراد مسئول حل این تمرین آرش و ریحانه هستن.'
         self.extractor.run(sent)
         self.assertEqual(self.extractor.tasks[0].assignees, ['آرش', 'ریحانه'])

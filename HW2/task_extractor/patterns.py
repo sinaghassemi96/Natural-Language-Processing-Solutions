@@ -1,4 +1,10 @@
-from task_extractor.parser import MixedRegexpParser
+from .parser import MixedRegexpParser
+
+months = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند']
+time_of_day = ['ظهر', 'صبح', 'عصر', 'شب', 'بامداد', 'فردا']
+
+def agg_words(tag, words):
+    return f"(?:<'(?:{'|'.join(words)})','{tag}'>)"
 
 class Patterns:
         ANY = r"[^']+"
@@ -11,50 +17,54 @@ class Patterns:
         NUM = f"(?:<{ANY_P},'NUM'>)"
         VERB = f"(?:<{ANY_P},'VERB'>)"
         ADP = f"(?:<{ANY_P},'ADP'>)"
+        ADVP = f"(?:<{ANY_P},'ADVP'>)"
+        ADV = f"(?:<{ANY_P},'ADV'>)"
         CCONJ = f"(?:<{ANY_P},'CCONJ'>)"
         DET = f"(?:<{ANY_P},'DET'>)"
+        NP_T = f"(?:<{ANY_P},'NP'>)"
+        VP_T = f"(?:<{ANY_P},'VP'>)"
         NUM_GROUP = f"(?:{NUM}(?:{CCONJ}{NUM})*)"
         NP = f"(?:{DET}?{NOUN}(?:{NOUN}|{ADJ}|{NUM_GROUP})*)"
-        NP_GROUP = f"(?:{NP}(?:{CCONJ}{NP})*)"
+        NP_GROUP = f"(?:{NP}(?:{CCONJ}|{ADP}{NP})*)"
         VP = f"(?:(?:{NOUN}|{ADJ})?{VERB})"
-        MONTH = f"(?:{AGG_WORDS('NOUN', ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'])})"
-        TIME = r"(?:<'\d+:\d+(?::\d+)?','NUM'>)"
+        MONTH = f"""(?:{agg_words('NOUN', months)})"""
+        TIME_OF_DAY = f"(?:{agg_words('NOUN', time_of_day)})"
+        TIME = f"(?:<'\d+:\d+(?::\d+)?','NUM'>{TIME_OF_DAY}*)"
         DATE = f"(?:{NUM_GROUP}{MONTH})"
         DATETIME = f"(?:{DATE}{TIME}|{TIME}{DATE}|{DATE}|{TIME})"
-        TASK_WORDS = ['وظیفه', 'تسک']
+        TASK_WORDS = ['وظیفه', 'تسک', 'کار',]
         ASSIGNEE_WORDS = ['مسئول', 'مسئولین', 'مسئولان', 'مسئولیت']
         START_WORDS = ['شروع', 'استارت']
         END_WORDS = ['پایان', 'تمام', 'انجام', 'تحویل', 'تمدید']
-        TASK = f"(?:{AGG_WORDS('NOUN', TASK_WORDS)}(?P<NAME>{NP}))"
-        DECLARATIONS = [
-            f"(?:{TASK}{ADP}+(?P<START_DATE>{DATETIME}){AGG_WORDS(ANY, START_WORDS)}{VERB}{ANY_T}+{ADP}+(?P<END_DATE>{DATETIME}){AGG_WORDS(ANY, END_WORDS)}{VERB})",
-            f"(?:{TASK}{ADP}?{VERB}{ADP}?(?P<START_DATE>{DATETIME}){AGG_WORDS(ANY, START_WORDS)}{VERB})",
-            f"(?:{TASK}{ADP}?{VERB}{ADP}?(?P<END_DATE>{DATETIME}){AGG_WORDS(ANY, END_WORDS)}{VERB})",
-            f"(?:(?P<ASSIGNEES>{NP_GROUP}){AGG_WORDS(ANY, ASSIGNEE_WORDS)}{TASK}{VERB})",
-            f"(?:{AGG_WORDS(ANY, ASSIGNEE_WORDS)}{TASK}{ADP}?(?P<ASSIGNEES>{NP_GROUP}){VERB})",
+
+        CREATE_TASK_NOUNS = ['یادم', 'انجام', 'تمام', 'تغییر', 'نشان']
+        CREATE_TASK_VERBS = ['باشه', 'شد', 'بده']
+
+        TASK_PERIODS = ['روزانه', 'هر روز', 'هر دو روز', 'هفتگی', 'ماهانه']
+        PLAN_WORDS = ['برنامه', 'پلن']
+        TASK_TIME = ['ساعت', 'زمان']
+        TASK_IDENTIFIER = ['به']
+
+        TASK = f"(?P<TASK>{NP})"
+
+        DECLARATION = [
+            f"(?:{agg_words('NOUN', CREATE_TASK_NOUNS)}{agg_words('VERB', CREATE_TASK_VERBS)}+(?P<PERIOD>{DET}*{NOUN}|{ADV})*(?P<TIME>{DATETIME}|{NP}{NUM}*)+(?P<ADP>{agg_words('ADP', TASK_IDENTIFIER)}{TASK}(?P<ACTION>{VERB})))",
         ]
-        ASSIGNMENTS = [
-            f"{AGG_WORDS(ANY, ASSIGNEE_WORDS)}{NP}*(?P<ASSIGNEES>{NP_GROUP}){VERB}",
-            f"(?P<ASSIGNEES>{NP_GROUP}){AGG_WORDS(ANY, ASSIGNEE_WORDS)}{NP}*{VERB}",
+
+        CANCEL = [
+            f"(?:{agg_words('NOUN', TASK_WORDS)}+{agg_words('ADP', TASK_IDENTIFIER)}{TASK}?{ANY_T}*(?P<CANCEL>{agg_words('NOUN', ['لغو'])}{agg_words('VERB', ['کن'])}))"
         ]
-        UPDATE_START_DATES = [
-            f"(?:{AGG_WORDS(ANY, START_WORDS)}{AGG_WORDS('NOUN', TASK_WORDS)}{NP}?{ADP}+(?P<START_DATE>{DATETIME}){VP})",
-            f"(?:{AGG_WORDS(ANY, START_WORDS)}{NP}?{AGG_WORDS('NOUN', TASK_WORDS)}{ADP}+(?P<START_DATE>{DATETIME}){VP})",
-            f"(?:(?P<START_DATE>{DATETIME}){NP}?{ADP}+{AGG_WORDS(ANY, START_WORDS)}{VERB})",
-            f"(?:{DET}?{AGG_WORDS('NOUN', TASK_WORDS)}{NP}?{ADP}+(?P<START_DATE>{DATETIME}){AGG_WORDS(ANY, START_WORDS)}{VERB})"
+
+        UPDATE = [
+            f"(?:{agg_words('NOUN', TASK_TIME)}{TASK}?{ANY_T}*(?P<DATE>{DATETIME})*{ANY_T}*(?P<TIME>{DATETIME})(?P<UPDATE>{agg_words('NOUN', CREATE_TASK_NOUNS)}{agg_words('VERB', CREATE_TASK_VERBS)}))"
         ]
-        UPDATE_DEADLINES = [
-            f"(?:{AGG_WORDS(ANY, ['مهلت', 'ددلاین'])}{DET}?{AGG_WORDS('NOUN', TASK_WORDS)}{NP}?{ADP}*(?P<END_DATE>{DATETIME}){VP})",
-            f"(?:{DET}?{AGG_WORDS('NOUN', TASK_WORDS)}{NP}?{ADP}+(?P<END_DATE>{DATETIME}){AGG_WORDS(ANY, END_WORDS)}{VERB})",
-            f"(?:{AGG_WORDS(ANY, END_WORDS)}{DET}?{AGG_WORDS('NOUN', TASK_WORDS)}{NP}?{ADP}*(?P<END_DATE>{DATETIME}){VERB})",
+
+        DONE = [
+            f"(?:{agg_words('NOUN', TASK_WORDS)}+{TASK}+{ANY_T}*(?P<DONE>{agg_words('NOUN', CREATE_TASK_NOUNS)}{agg_words('VERB', CREATE_TASK_VERBS)}))"
         ]
-        DONES = [
-            f"(?:{AGG_WORDS('NOUN', TASK_WORDS)}{ADP}?{NP}?{AGG_WORDS(ANY, END_WORDS)}{VERB})"
-        ]
-        SUBTASK = f"(?P<SUBTASKS>{AGG_WORDS(ANY, ['ابتدا', 'اول'])}?{ANY_T}+(?:{CCONJ}{AGG_WORDS(ANY, ['سپس', 'بعد'])}{ANY_T}+)+)"
-        SUBTASK_DECLARATIONS = [
-            f"(?:{ADP}{NP}{VERB}{SUBTASK})",
-            f"(?:{AGG_WORDS('NOUN', TASK_WORDS)}{NP}?{AGG_WORDS(ANY, ['شامل', 'متشکل'])}{ADP}?{SUBTASK}{VERB})",
+
+        FETCH = [
+            f"(?:{agg_words('NOUN', PLAN_WORDS)}(?P<PERIOD>{agg_words('ADJ', TASK_PERIODS)}){ANY_T}*(?P<SHOW>{agg_words('NOUN', CREATE_TASK_NOUNS)}{agg_words('VERB', CREATE_TASK_VERBS)})+)"
         ]
 
         def __init__(self):
