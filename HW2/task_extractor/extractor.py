@@ -1,16 +1,17 @@
 import json
-import hazm
-from HW2.database.orm import TaskDB
-
-from .patterns import Patterns
 import re
-from .parser import MixedRegexpParser
+
+import hazm
+
+from HW2.database.orm import TaskDB
+from .patterns import Patterns
 
 
 def reform_chunker_array(text: str) -> list:
     pattern = r'\[([^\]]+)\]'
     tagged_words = re.findall(pattern, text)
     return [(' '.join(p for p in pair.split()[:-1]), pair.split()[-1]) for pair in tagged_words]
+
 
 class Task:
     def __init__(self):
@@ -23,6 +24,22 @@ class Task:
 
     def __repr__(self):
         return json.dumps(self.__dict__, indent=4, ensure_ascii=False)
+
+
+def parse_date(groups):
+    if 'DATE' in groups:
+        return ' '.join(word for word, tag in groups['DATE'])
+
+
+def parse_period(groups):
+    if 'PERIOD' in groups:
+        return ' '.join(word for word, tag in groups['PERIOD'])
+
+
+def parse_time(groups):
+    if 'TIME' in groups:
+        return ' '.join(word for word, tag in groups['TIME'])
+
 
 class TaskExtractor:
     normalizer = hazm.Normalizer()
@@ -37,27 +54,23 @@ class TaskExtractor:
     def __init__(self):
         self.tasks = []
         self.db = TaskDB()
-    
+
     def check_for_tasks(self, name):
         for task in self.tasks:
             if task.name.startswith(name) or name.startswith(task.name):
                 return True
         return False
 
-    def parse_task(self, groups):
+    def parse_task_name(self, groups):
         if 'TASK' in groups:
             if self.check_for_tasks(' '.join(word for word, tag in groups['TASK'])):
                 return None
-            return ' '.join(word for word, tag in groups['TASK'])
-
-    def parse_period(self, groups, task: Task):
-        if 'PERIOD' in groups:
-            return ' '.join(word for word, tag in groups['PERIOD'])
-
-
-    def parse_time(self, groups, task: Task):
-        if 'TIME' in groups:
-            return  ' '.join(word for word, tag in groups['TIME'])
+            name = ' '.join(word for word, tag in groups['TASK'])
+            if 'ACTION' in groups:
+                name = name + ' ' + self.lemmatizer.lemmatize([word for word, tag in groups['ACTION']][0]).split('#')[0] + 'ن'
+            if 'ADP' in groups:
+                name = self.lemmatizer.lemmatize([word for word, tag in groups['ADP']][0]) + ' ' + name
+            return name
 
     def parse_name(self, groups):
         if 'NAME' in groups:
@@ -77,14 +90,14 @@ class TaskExtractor:
                 result = pattern.parse(tags)
                 if result:
                     matches, groups = result
-                    name = self.parse_task(groups)
+                    name = self.parse_task_name(groups)
                     if not name:
                         continue
                     task = Task()
                     task.name = name
-                    period = self.parse_period(groups, task)
-                    time = self.parse_time(groups, task)
-                    date = self.parse_date(groups, task)
+                    period = parse_period(groups)
+                    time = parse_time(groups)
+                    date = parse_date(groups)
                     done = False
                     cancel = False
                     self.db.create_task(name, time, date, period, done, cancel)
@@ -94,20 +107,30 @@ class TaskExtractor:
                 result = pattern.parse(tags)
                 if result:
                     matches, groups = result
-                    self.parse_edition(groups)
+                    name = self.parse_task_name(groups)
+                    date = parse_date(groups)
+                    time = parse_time(groups)
+                    task = self.db.find_task(name, None, None)
+                    self.parse_edition(groups, task)
 
             for pattern in self.patterns['FETCH']:
                 result = pattern.parse(tags)
                 if result:
                     return self.db.find_all()
-        # return self.db.find_all()
 
-    def parse_edition(self, groups):
-        if len(self.tasks) == 0:
+    def parse_edition(self, groups, task):
+        if self.db.count_tasks() == 0:
             raise Exception('EMPTY.TASK.ARRAYS')
+        is_done = False
+        is_cancelled = False
+        time = task['time']
         if 'CANCEL' in groups:
-            pass
+            is_cancelled = True
+        if 'DONE' in groups:
+            is_done = True
+        if 'UPDATE' in groups:
+            time = parse_time(groups)
+        self.db.update_task(task['id'], time, task['date'], is_done, is_cancelled)
 
-    def parse_date(self, groups, task):
-        if 'DATE' in groups:
-            return ' '.join(word for word, tag in groups['DATE'])
+    def get_tasks(self):
+        return self.db.find_all()

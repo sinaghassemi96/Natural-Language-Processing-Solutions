@@ -18,12 +18,13 @@ class Patterns:
         VERB = f"(?:<{ANY_P},'VERB'>)"
         ADP = f"(?:<{ANY_P},'ADP'>)"
         ADVP = f"(?:<{ANY_P},'ADVP'>)"
+        ADV = f"(?:<{ANY_P},'ADV'>)"
         CCONJ = f"(?:<{ANY_P},'CCONJ'>)"
         DET = f"(?:<{ANY_P},'DET'>)"
         NP_T = f"(?:<{ANY_P},'NP'>)"
         VP_T = f"(?:<{ANY_P},'VP'>)"
         NUM_GROUP = f"(?:{NUM}(?:{CCONJ}{NUM})*)"
-        NP = f"(?:{DET}?{NOUN}{ADP}*(?:{NOUN}|{ADJ}|{NUM_GROUP})*)"
+        NP = f"(?:{DET}?{NOUN}(?:{NOUN}|{ADJ}|{NUM_GROUP})*)"
         NP_GROUP = f"(?:{NP}(?:{CCONJ}|{ADP}{NP})*)"
         VP = f"(?:(?:{NOUN}|{ADJ})?{VERB})"
         MONTH = f"""(?:{agg_words('NOUN', months)})"""
@@ -47,15 +48,15 @@ class Patterns:
         TASK = f"(?P<TASK>{NP})"
 
         DECLARATION = [
-            f"(?:{agg_words('NOUN', CREATE_TASK_NOUNS)}{agg_words('VERB', CREATE_TASK_VERBS)}+(?P<PERIOD>{DET}{NOUN})+(?P<TIME>{NP})+({agg_words('ADP', TASK_IDENTIFIER)}{TASK}{VERB}))",
+            f"(?:{agg_words('NOUN', CREATE_TASK_NOUNS)}{agg_words('VERB', CREATE_TASK_VERBS)}+(?P<PERIOD>{DET}*{NOUN}|{ADV})*(?P<TIME>{DATETIME}|{NP}{NUM}*)+(?P<ADP>{agg_words('ADP', TASK_IDENTIFIER)}{TASK}(?P<ACTION>{VERB})))",
         ]
 
         CANCEL = [
-            f"(?:{TASK}?{ANY_T}*(?P<CANCEL>{agg_words('NOUN', ['لغو'])}{agg_words('VERB', ['کن'])}))"
+            f"(?:{agg_words('NOUN', TASK_WORDS)}+{agg_words('ADP', TASK_IDENTIFIER)}{TASK}?{ANY_T}*(?P<CANCEL>{agg_words('NOUN', ['لغو'])}{agg_words('VERB', ['کن'])}))"
         ]
 
         UPDATE = [
-            f"(?:{agg_words('NOUN', TASK_TIME)}+{TASK}+{ANY_T}*(?P<DATE>{DATETIME}){ANY_T}*(?P<TIME>{DATETIME})(?P<UPDATE>{agg_words('NOUN', CREATE_TASK_NOUNS)}{agg_words('VERB', CREATE_TASK_VERBS)}))"
+            f"(?:{agg_words('NOUN', TASK_TIME)}{TASK}?{ANY_T}*(?P<DATE>{DATETIME})*{ANY_T}*(?P<TIME>{DATETIME})(?P<UPDATE>{agg_words('NOUN', CREATE_TASK_NOUNS)}{agg_words('VERB', CREATE_TASK_VERBS)}))"
         ]
 
         DONE = [

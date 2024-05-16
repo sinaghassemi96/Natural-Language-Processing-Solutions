@@ -4,11 +4,13 @@ import json
 
 def json_formater(task):
     return {
+        'id': task[0],
         'name': task[1],
         'time': task[2],
-        'period': task[3],
-        'is_done': task[4],
-        'is_cancelled': task[5]
+        'date': task[3],
+        'period': task[4],
+        'is_done': task[5],
+        'is_cancelled': task[6]
     }
 
 
@@ -43,15 +45,28 @@ class TaskDB:
         formatted_tasks = [json_formater(tasks) for tasks in tasks]
         return json.dumps(formatted_tasks, indent=4, ensure_ascii=False)
 
-    def find_task(self, name):
-        self.cursor.execute('''SELECT name FROM tasks WHERE name LIKE %s''', name)
-        self.conn.commit()
-        return self.cursor.fetchone()
+    def find_task(self, name, time, date):
+        like_name = f'%{name}%'
+        try:
+            self.cursor.execute('''SELECT * FROM tasks t WHERE t.name LIKE %s AND ((%s IS NULL OR t.time = %s) 
+            AND (%s IS NULL OR t.date = %s))''',
+                                (like_name, time, time, date, date))
+            res = self.cursor.fetchone()
+            if res:
+                return json_formater(res)
+            else:
+                raise Exception('TASK.NOT.FOUND')
+        except Exception as e:
+            print(e)
 
-    def update_user(self, task_id, time, date, done, cancel):
-        self.cursor.execute("UPDATE users SET time = %s, date = %s, done = %s, cancel = %s WHERE id = %s",
+    def update_task(self, task_id, time, date, done, cancel):
+        self.cursor.execute("UPDATE tasks SET time = %s, date = %s, done = %s, cancel = %s WHERE id = %s",
                             (time, date, done, cancel, task_id))
         self.conn.commit()
+
+    def count_tasks(self):
+        self.cursor.execute('''SELECT COUNT(*) FROM tasks''')
+        return self.cursor.fetchone()
 
     def __del__(self):
         # Close the connection
@@ -60,3 +75,7 @@ class TaskDB:
 
     def __repr__(self):
         return json.dumps(self.__dict__, indent=4, ensure_ascii=False)
+
+
+if __name__ == '__main__':
+    db = TaskDB()
