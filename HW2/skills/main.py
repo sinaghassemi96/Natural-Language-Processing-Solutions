@@ -1,7 +1,7 @@
+from opsdroid.matchers import match_regex
 from opsdroid.skill import Skill
-from opsdroid.matchers import match_parse
-from ..task_extractor.extractor import TaskExtractor
 
+from ..task_extractor.extractor import TaskExtractor
 
 def __doc__() -> str:
     return '''
@@ -21,6 +21,6 @@ class BotSkill(Skill):
         super().__init__(opsdroid, config, *args, **kwargs)
         self.extractor = TaskExtractor()
 
-    @match_parse(r'command {key}|دستور {key}', case_sensitive=False)
+    @match_regex(r'command {key}|دستور {key}', case_sensitive=False)
     async def add_event(self, text):
-        return self.extractor.run(text.entities['key']['value'])
+        await text.repond(self.extractor.run(text.entities['key']['value']))
