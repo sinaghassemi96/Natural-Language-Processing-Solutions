@@ -10,12 +10,12 @@ connectors:
     nick: 'Your Friend'
     device_id: 'OPSDroid'
     enable_encryption: True
-#  welcome-message: True
+  welcome-message: True
 
 skills:
-  welcome:
-    enabled: true
-    message: 'به دستیار مدیریت رویدادها و وقایع خوش آمدید.'
+#  welcome:
+#    enabled: true
+#    message: 'به دستیار مدیریت رویدادها و وقایع خوش آمدید.'
   greetings:
     path: skills/greetings.py
   help:
