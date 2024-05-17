@@ -17,10 +17,11 @@ skills:
 #    enabled: true
 #    message: 'به دستیار مدیریت رویدادها و وقایع خوش آمدید.'
   greetings:
-    path: opsdroid_skills/greetings/greetings.py
+    path: skills/greetings.py
   help:
-    path: opsdroid_skills/help/help.py
+    path: skills/help.py
   main:
-    path: opsdroid_skills/main/bot.py
+  - name: bot
+    path: skills/bot.py
   accept_invite:
-    path: opsdroid_skills/accept_invite/accept_invite.py
+    path: skills/accept_invite.py
