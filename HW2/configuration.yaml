@@ -1,3 +1,5 @@
+planner:
+  duration: 30
 connectors:
   matrix:
     mxid: '@planner_bot:matrix.org'

@@ -5,6 +5,7 @@ from task_extractor.extractor import TaskExtractor
 
 def main():
     normalizer = Normalizer()
+    extractor = TaskExtractor()
     while True:
         try:
             sent = str(input('دستور را وارد کن و برای خروج بنویس خروج:\n'))
@@ -16,9 +17,9 @@ def main():
             # sent = 'زمان تماس با دوستم در 12 فروردین را به 9:30 شب تغییر بده.'
             # sent = 'برنامه هفتگی‌ام را نشان بده.'
             sent = normalizer.normalize(sent)
-            extractor = TaskExtractor()
             res = extractor.run(sent)
-            print(res)
+            if res is not None:
+                print(res)
         except Exception as e:
             print(e)
             continue
