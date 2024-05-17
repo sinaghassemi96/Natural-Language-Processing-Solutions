@@ -1,3 +1,4 @@
+
 planner:
   duration: 30
 connectors:
@@ -23,6 +24,9 @@ skills:
   main:
     path: skill/main.py
   accept_invite:
+    path: skill/accept_invite.py
+  guide:
+    path: skills/guide.py
     path: skill/accept_invite.py
 
 debug: true
