@@ -21,7 +21,6 @@ skills:
   help:
     path: skills/help.py
   main:
-  - name: bot
-    path: skills/bot.py
+    path: skills/main.py
   accept_invite:
     path: skills/accept_invite.py

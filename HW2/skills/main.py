@@ -1,12 +1,7 @@
-import os
-
 from opsdroid.matchers import match_regex
 from opsdroid.skill import Skill
-import imp
 
-dir = os.getcwd()
-extractor = imp.load_source('extractor', dir + '\\HW2\\task_extractor\\extractor.py')
-
+from ..task_extractor.extractor import TaskExtractor
 
 def __doc__() -> str:
     return '''
@@ -24,7 +19,7 @@ class BotSkill(Skill):
 
     def __init__(self, opsdroid, config, *args, **kwargs):
         super().__init__(opsdroid, config, *args, **kwargs)
-        self.extractor = extractor.TaskExtractor()
+        self.extractor = TaskExtractor()
 
     @match_regex(r'command {key}|دستور {key}', case_sensitive=False)
     async def add_event(self, text):
