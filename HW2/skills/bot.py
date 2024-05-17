@@ -1,7 +1,9 @@
 from opsdroid.matchers import match_regex
 from opsdroid.skill import Skill
 
-from ..task_extractor.extractor import TaskExtractor
+import os
+
+from HW2.task_extractor.extractor import TaskExtractor
 
 
 def __doc__() -> str:
