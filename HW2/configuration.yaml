@@ -1,3 +1,5 @@
+welcome-message: True
+
 connectors:
   matrix:
     mxid: '@planner_bot:matrix.org'
@@ -8,7 +10,7 @@ connectors:
     nick: 'Your Friend'
     device_id: 'OPSDroid'
     enable_encryption: True
-#  welcome-message: True
+    
 
 skills:
   welcome:
@@ -22,3 +24,5 @@ skills:
     path: skills/bot.py
   accept_invite:
     path: skills/accept_invite.py
+  guide:
+    path: skills/guide.py

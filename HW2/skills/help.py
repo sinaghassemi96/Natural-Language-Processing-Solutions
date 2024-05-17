@@ -5,7 +5,7 @@ from opsdroid.skill import Skill
 
 
 class Helper(Skill):
-    @match_regex(r"help$|کمک|راهنما")
+    @match_regex(r"help$|کمک")
     async def help(self, message):
         """help - Displays this help message"""
         response = []
@@ -20,7 +20,7 @@ class Helper(Skill):
                 response.append(skill.__name__)
         await message.respond("\n".join(sorted(response)))
 
-    @match_regex(r"help (.*)")
+    @match_regex(r"help (.*) | کمک (.*)")
     async def help_skill(self, message):
         """help <skill_name> - Displays usage for provided skill"""
         logging.debug("searching for {}".format(message.regex))
