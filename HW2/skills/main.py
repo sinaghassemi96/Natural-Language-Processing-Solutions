@@ -1,7 +1,12 @@
 from opsdroid.matchers import match_regex
 from opsdroid.skill import Skill
 
-from HW2.task_extractor.extractor import TaskExtractor
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'task_extractor')))
+
+from extractor import TaskExtractor
 
 
 def __doc__() -> str:
