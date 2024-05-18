@@ -1,17 +1,17 @@
 import random
 
-from opsdroid.matchers import match_regex
+from opsdroid.matchers import match_parse
 from opsdroid.skill import Skill
 
 
 class HelloSkill(Skill):
-    @match_regex(r'سلام')
+    @match_parse(r'سلام')
     async def hello(self, message):
         text = random.choice(
             ["سلام {}", "سلام بر {}", "درود {}", "خوش اومدی {}"]).format(message.user)
         await message.respond(text)
 
-    @match_regex(r'خدافظ')
+    @match_parse(r'خدافظ')
     async def bye(self, message):
         text = random.choice(
             ["به امید دیدار {}", "مخلصم {}", "بای‌بای {}"]).format(message.user)
