@@ -17,13 +17,13 @@ skills:
 #    enabled: true
 #    message: 'به دستیار مدیریت رویدادها و وقایع خوش آمدید.'
   greetings:
-    path: skill/greetings.py
+    path: skills/greetings.py
   help:
-    path: skill/help.py
+    path: skills/help.py
   main:
-    path: skill/main.py
+    path: skills/main.py
   accept_invite:
-    path: skill/accept_invite.py
+    path: skills/accept_invite.py
 
 debug: true
 
