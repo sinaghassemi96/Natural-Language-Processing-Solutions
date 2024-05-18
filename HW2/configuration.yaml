@@ -1,3 +1,6 @@
+web:
+  host: '0.0.0.0'
+  port: 8000
 planner:
   duration: 30
 connectors:
@@ -9,25 +12,26 @@ connectors:
     homeserver: 'https://matrix.org'
     nick: 'Your Friend'
     device_id: 'OPSDroid'
+    device_name: 'opsdroid'
     enable_encryption: True
+    welcome-message: False
+welcome-message: false
 
 skills:
   greetings:
     path: skills/greetings.py
   help:
-  - name: help
-    path: skills.help
+#  - name: help
+    path: skills/help.py
   main:
   - name: main
-    path: skills.main
+    path: skills/main.py
   accept_invite:
     path: skills/accept_invite.py
 
-debug: true
-
-databases:
-  mongo:
-    type: mongodb
-    database: nlp_bot
-    host: localhost
-    port: 27017
+#databases:
+#  mongo:
+#    type: mongodb
+#    database: nlp_bot
+#    host: localhost
+#    port: 27017
