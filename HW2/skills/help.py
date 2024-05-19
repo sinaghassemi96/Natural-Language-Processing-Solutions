@@ -8,17 +8,7 @@ class Helper(Skill):
     @match_regex(r"help$|کمک|راهنما")
     async def help(self, message):
         """help - Displays this help message"""
-        response = []
-        for skill in self.opsdroid.skills:
-            if skill.__doc__:
-                response.append("{}: {}".format(skill.__name__, skill.__doc__))
-            else:
-                doc_string_not_found = "doc string not found for {}".format(
-                    skill.__name__
-                )
-                logging.debug(doc_string_not_found)
-                response.append(skill.__name__)
-        await message.respond("\n".join(sorted(response)))
+        await message.respond('سلام! به دستیار مدیریت وقایع خوش آمدید. برای افزودن یک واقعه به تقویم، ابتدا command نوشته و کار خود را اعلام کنید.')
 
     @match_regex(r"help (.*)")
     async def help_skill(self, message):
