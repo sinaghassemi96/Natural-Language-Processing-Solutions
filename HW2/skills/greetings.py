@@ -5,7 +5,7 @@ from opsdroid.skill import Skill
 
 
 class HelloSkill(Skill):
-    @match_regex(r'hi')
+    @match_regex(r'سلام')
     async def hello(self, message):
         text = random.choice(
             ["سلام {}", "سلام بر {}", "درود {}", "خوش اومدی {}"]).format(message.user)
