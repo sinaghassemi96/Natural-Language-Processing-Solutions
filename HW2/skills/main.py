@@ -29,7 +29,7 @@ class BotSkill(Skill):
         super().__init__(opsdroid, config, *args, **kwargs)
         self.extractor = TaskExtractor()
 
-    @match_parse(r'command {key}')
+    @match_parse(r'دستور {key}')
     async def add_event(self, message):
         print(message)
         res = self.extractor.run(str(message.entities['key']['value']))
