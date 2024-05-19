@@ -28,6 +28,9 @@ skills:
     path: skills/main.py
   accept_invite:
     path: skills/accept_invite.py
+  welcome-skil:
+    path: skills/welcome_skill.py
+    note: 'سلام! به دستیار مدیریت وقایع خوش آمدید. /n برای مشاهده‌ی راهنما، help و برای افزودن یک واقعه به تقویم، ابتدا command نوشته و کار خود را اعلام کنید.'
 
 #databases:
 #  mongo:
