@@ -30,6 +30,7 @@ skills:
     path: skills/accept_invite.py
   welcome_skill:
     path: skills/welcome_skill.py
+    help_note: "Hi there! Here are some commands you can use:\n- `help`: Show this help message\n- `start`: Start the bot\n- `status`: Check bot status"
 
 #databases:
 #  mongo:
