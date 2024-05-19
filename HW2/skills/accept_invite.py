@@ -11,3 +11,4 @@ class AcceptInvite(Skill):
         print(vars(invite))
         if isinstance(invite, UserInvite):
             await invite.respond(JoinRoom())
+            await invite.respond('سلام! به دستیار مدیریت وقایع خوش آمدید. برای افزودن یک واقعه به تقویم، ابتدا command نوشته و کار خود را اعلام کنید.')
