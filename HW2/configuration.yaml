@@ -1,4 +1,4 @@
-web:
+  GNU nano 6.2                                    HW2/configuration.yaml                                             web:
   host: '0.0.0.0'
   port: 8000
 planner:
@@ -24,7 +24,7 @@ skills:
 #  - name: help
     path: skills/help.py
   main:
-  - name: main
+#  - name: main
     path: skills/main.py
   accept_invite:
     path: skills/accept_invite.py

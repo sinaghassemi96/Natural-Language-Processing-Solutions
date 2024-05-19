@@ -1,12 +1,14 @@
-from opsdroid.matchers import match_regex
+from opsdroid.matchers import match_regex, match_parse
 from opsdroid.skill import Skill
 
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'task_extractor')))
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'task_extractor')))
+sys.path.append(os.getcwd())
 
-from extractor import TaskExtractor
+from task_extractor.extractor import *
+import hazm
 
 
 def __doc__() -> str:
@@ -27,6 +29,12 @@ class BotSkill(Skill):
         super().__init__(opsdroid, config, *args, **kwargs)
         self.extractor = TaskExtractor()
 
-    @match_regex(r'command {key}|دستور {key}', case_sensitive=False)
-    async def add_event(self, text):
-        await text.repond(self.extractor.run(text.entities['key']['value']))
+    @match_parse(r'command {key}')
+    async def add_event(self, message):
+        print(message)
+        res = self.extractor.run(str(message.entities['key']['value']))
+        print(res)
+        if res:
+            await message.respond(str(res))
+        else:
+            await message.respond('باشه.')

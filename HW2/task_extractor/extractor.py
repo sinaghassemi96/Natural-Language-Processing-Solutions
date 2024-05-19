@@ -5,7 +5,7 @@ import re
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.abspath(__name__)))
+sys.path.append(os.getcwd())
 
 import hazm
 from persiantools.jdatetime import JalaliDate
