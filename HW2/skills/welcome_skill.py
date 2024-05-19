@@ -14,5 +14,5 @@ class WelcomeSkill(Skill):
     async def on_startup(self, event):
         # Ensure this only runs once on startup
         if event.text == "opsdroid startup":
-            note = self.config.get("note", 'سلام! به دستیار مدیریت وقایع خوش آمدید. \n برای مشاهده‌ی راهنما، help و برای افزودن یک واقعه به تقویم، ابتدا command نوشته و کار خود را اعلام کنید.')
+            note = self.config.get("note", 'سلام! به دستیار مدیریت وقایع خوش آمدید. برای افزودن یک واقعه به تقویم، ابتدا command نوشته و کار خود را اعلام کنید.')
             await event.respond(note)
