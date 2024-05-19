@@ -28,7 +28,7 @@ skills:
     path: skills/main.py
   accept_invite:
     path: skills/accept_invite.py
-  welcome-skil:
+  welcome-skill:
     path: skills/welcome_skill.py
 
 #databases:
