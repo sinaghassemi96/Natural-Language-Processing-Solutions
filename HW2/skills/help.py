@@ -33,7 +33,7 @@ class Helper(Skill):
         #         )
         #         logging.debug(doc_string_not_found)
         #         response.append(skill.__name__)
-        await self.opsdroid.send(Message(text=response, target=message.room))
+        await self.opsdroid.default_connector.send(Message(text=response, target=message.target))
         await message.respond(response)
 
     @match_regex(r"help (.*)")
