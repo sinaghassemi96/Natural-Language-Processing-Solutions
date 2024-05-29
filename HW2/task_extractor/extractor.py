@@ -2,6 +2,11 @@ import datetime
 import json
 import re
 
+import sys
+import os
+
+sys.path.append(os.getcwd())
+
 import hazm
 from persiantools.jdatetime import JalaliDate
 

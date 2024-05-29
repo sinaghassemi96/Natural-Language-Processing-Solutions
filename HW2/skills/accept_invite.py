@@ -1,6 +1,6 @@
 from opsdroid.skill import Skill
 from opsdroid.matchers import match_event
-from opsdroid.events import UserInvite, JoinRoom
+from opsdroid.events import UserInvite, JoinRoom, Message
 
 
 class AcceptInvite(Skill):
