@@ -1,6 +1,7 @@
 import logging
 
-from opsdroid.matchers import match_regex
+from opsdroid.events import JoinRoom
+from opsdroid.matchers import match_regex, match_event
 from opsdroid.skill import Skill
 
 
