@@ -1,11 +1,16 @@
 import logging
 
-from opsdroid.events import JoinRoom
+from opsdroid.events import JoinRoom, Message
 from opsdroid.matchers import match_regex, match_event
 from opsdroid.skill import Skill
 
 
 class Helper(Skill):
+
+    def __init__(self, opsdroid, config):
+        super(Helper, self).__init__(opsdroid, config)
+        self.opsdroid = opsdroid
+
     @match_regex(r"help$|کمک|راهنما")
     @match_event(JoinRoom)
     async def help(self, message):
@@ -28,6 +33,7 @@ class Helper(Skill):
         #         )
         #         logging.debug(doc_string_not_found)
         #         response.append(skill.__name__)
+        await self.opsdroid.send(Message(text=response, target=message.room))
         await message.respond(response)
 
     @match_regex(r"help (.*)")
