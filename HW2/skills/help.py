@@ -1,24 +1,34 @@
 import logging
 
-from opsdroid.matchers import match_regex
+from opsdroid.events import JoinRoom
+from opsdroid.matchers import match_regex, match_event
 from opsdroid.skill import Skill
 
 
 class Helper(Skill):
     @match_regex(r"help$|کمک|راهنما")
+    @match_event(JoinRoom)
     async def help(self, message):
-        """help - Displays this help message"""
-        response = []
-        for skill in self.opsdroid.skills:
-            if skill.__doc__:
-                response.append("{}: {}".format(skill.__name__, skill.__doc__))
-            else:
-                doc_string_not_found = "doc string not found for {}".format(
-                    skill.__name__
-                )
-                logging.debug(doc_string_not_found)
-                response.append(skill.__name__)
-        await message.respond("\n".join(sorted(response)))
+
+        response = ('سلام، به دستیار ثبت رویدادها و وقایع خوش آمدید. برای فرستادن دستور، ابتدا یک command نوشته و '
+                    'سپس فرمان خود را وارد کنید. مثلاً \n'
+                    'command یادم باشه فردا ساعت 8 به حل تمرین بپردازم -> یک تسک به وظایف شما اضافه می‌کند.'
+                    'command برنامه هفتگی‌ام را نشان بده. -> برنامه‌ی شما را باز می‌گرداند.'
+                    'command پرداختن به حل تمرین فردا را به ساعت 9 تغییر بده. -> زمان را تغییر می‌دهد.'
+                    'command کار تماس با دوستم انجام شد -> کار را به وضعیت انجام‌شده می‌برد.')
+
+        # """help - Displays this help message"""
+        # response = []
+        # for skill in self.opsdroid.skills:
+        #     if skill.__doc__:
+        #         response.append("{}: {}".format(skill.__name__, skill.__doc__))
+        #     else:
+        #         doc_string_not_found = "doc string not found for {}".format(
+        #             skill.__name__
+        #         )
+        #         logging.debug(doc_string_not_found)
+        #         response.append(skill.__name__)
+        await message.respond(response)
 
     @match_regex(r"help (.*)")
     async def help_skill(self, message):
